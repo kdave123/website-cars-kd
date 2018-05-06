@@ -27,8 +27,11 @@ Cars empire website ( SQL, PHP, JavaScript, HTML, CSS , Animations )
 
 7.Checkout page
 
-8.Profile Pag
+8.Profile Page
 
+9. Reset Password 
+
+10. Others
 <h3>Features :</h3> 
 
 1.Cart
