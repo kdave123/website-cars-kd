@@ -1,0 +1,136 @@
+<?php 
+require 'db.php';
+if ($_SERVER['REQUEST_METHOD'] == 'POST') 
+{
+    if (isset($_POST['login'])) { //user logging in
+
+        require 'login.php';
+        
+    }
+    
+    elseif (isset($_POST['register'])) { //user registering
+        
+        require 'register.php';
+        
+    }
+}
+?>
+ <?php
+ 
+ // Check if user is logged in using the session variable
+if(isset($_SESSION['logged_in']) )
+if ( $_SESSION['logged_in'] == 1 ) {
+
+ // $_SESSION['message'] = "You must log in before viewing your profile page!";
+ // header("location: error.php");    
+?>
+<style type="text/css">
+.logindisp{
+display:none;
+}</style>
+
+<?php
+}
+ ?>
+ <div class="rightlog">
+<form action="home.php" method="post" autocomplete="off">
+
+<div class="logindisp" id="logindisp" >
+Email Address<font color="red">*</font><br><input style="width:100%;" type="email" required autocomplete="off" name="email"/>
+<br>Password<font color="red">*</font><br><input  style="width:100%;"type="password" required autocomplete="off" name="password"/>
+<br>
+<button class="button" style="float:right"name="login" />Log In</button><p id="forgot" onclick="hidelogin()" >Forgot Password?</p><a href="register.php" style="color:black;font-weight:bold;">Not Registered? SIGN UP here</a>
+</div>
+<input type="hidden" name="loginpressed" value="1"/>
+  </form>
+<script>
+function hidelogin() {
+    document.getElementById("logindisp").style.display="none";
+	document.getElementById("forgotdisp").style.display="block";
+}
+
+</script>
+
+<?php
+if(isset($_SESSION['logged_in']) )
+{
+ if($_SESSION['logged_in']==1)
+ {
+?>	<div class="para">
+<font size="5px">Hello, <a href="profile.php" style="color:red;"><?= $_SESSION['first_name'];?></a></font>
+<?php
+$active = $_SESSION['active'];
+  // Keep reminding the user this account is not active, until they activate
+          if ( !$active ){
+echo'(Account is unverified, please
+confirm your email)';
+}
+?>
+<br>
+<a href="logout.php" style="float:right" class="button" name="logout">Log Out</a>
+
+</div>
+<?php
+         
+}
+}
+?>
+	
+
+
+
+
+<?php
+// Check if form submitted with method="post"
+if(isset($_POST['resetpressed']))
+if ( $_SERVER['REQUEST_METHOD'] == 'POST' AND !isset($_POST['password'])  AND  $_POST['resetpressed']==1) 
+{   
+    $email = $mysqli->escape_string($_POST['email']);
+    $result = $mysqli->query("SELECT * FROM users WHERE email='$email'");
+
+    if ( $result->num_rows == 0 ) // User doesn't exist
+    { 
+        $_SESSION['message'] = "User with that email doesn't exist!";
+        header("location: error.php");
+    }
+    else { // User exists (num_rows != 0)
+
+        $user = $result->fetch_assoc(); // $user becomes array with user data
+        
+        $email = $user['email'];
+        $hash = $user['hash'];
+        $first_name = $user['first_name'];
+
+        // Session message to display on home.php
+        $_SESSION['message'] = "<p>Please check your email <span>$email</span>"
+        . " for a confirmation link to complete your password reset!</p>";
+
+        // Send registration confirmation link (reset.php)
+        $to      = $email;
+        $subject = 'Password Reset Link ';
+        $message_body = '
+        Hello '.$first_name.',
+
+        You have requested password reset!
+
+        Please click this link to reset your password:
+
+        http://localhost/login-system/reset.php?email='.$email.'&hash='.$hash;  
+
+        mail($to, $subject, $message_body);
+		
+         header("location: home.php?doaction=linksent");
+		
+  }
+ 
+}
+?>
+  <form class="forgotdisp" id="forgotdisp" action="home.php" method="post">
+   
+Email Address<font color="red">*</font><br><input  style="width:100%;" type="email"required autocomplete="off" name="email"/>
+		
+				<button class="button">Reset</button>
+				<input type="hidden" name="resetpressed" value="1"/>
+    </form>
+	
+</div>
