@@ -4,13 +4,12 @@ session_start();
 ?>
 <?php
 $product_ids = array();
-//session_destroy();
 
-//check if Add to Cart button has been submitted
+
 if(filter_input(INPUT_POST, 'add_to_cart')){
     if(isset($_SESSION['shopping_cart'])){
         
-        //keep track of how mnay products are in the shopping cart
+        //keep track of how many products are in the shopping cart
         $count = count($_SESSION['shopping_cart']);
         
         //create sequantial array for matching array keys to products id's
@@ -36,7 +35,7 @@ if(filter_input(INPUT_POST, 'add_to_cart')){
         }
         
     }
-    else { //if shopping cart doesn't exist, create first product with array key 0
+    else { //if shopping cart doesn't exist, create first product with array index 0
         //create array using submitted form data, start from key 0 and fill it with values
         $_SESSION['shopping_cart'][0] = array
         (
